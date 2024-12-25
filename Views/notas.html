@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Lista de Notas</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre Corto</th>
+        <th>Estado</th>
+        <th>Título</th>
+        <th>Encabezado</th>
+        <th>Categoría</th>
+        <th>Contenido</th>
+    </tr>
+    </thead>
+    <tbody id="notas-table-body">
+    <!-- Aquí se insertarán las filas con las notas -->
+    </tbody>
+</table>
+
+<script>
+    // Función para hacer la solicitud a notas.php y mostrar los datos
+    fetch('../public/notas.php', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data.length > 0) {
+                const notasTableBody = document.getElementById('notas-table-body');
+                data.data.forEach(nota => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${nota.id}</td>
+                        <td>${nota.nombre_corto}</td>
+                        <td>${nota.estado}</td>
+                        <td>${nota.titulo}</td>
+                        <td>${nota.encabezado}</td>
+                        <td>${nota.categoria}</td>
+                        <td>${nota.contenido}</td>
+                    `;
+                    notasTableBody.appendChild(row);
+                });
+            } else {
+                const notasTableBody = document.getElementById('notas-table-body');
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7">No hay notas disponibles</td>';
+                notasTableBody.appendChild(row);
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar las notas:', error);
+        });
+</script>
+</body>
+</html>
